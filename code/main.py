@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 
+from locate import locate
+
 def show(img, title="img"):
     plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
     plt.title(title)
@@ -38,7 +40,7 @@ def merge_circle(src, dst, src_pts, H):
     # show(src_trans, "bgr src_trans")
     result += src_trans    
 
-    cv2.imwrite('imgs/result_raw.jpg', result)
+    cv2.imwrite('imgs/result/result_raw.jpg', result)
     show(result, "result_raw")
 
     # blur boundary
@@ -77,7 +79,7 @@ def merge_ellipse(src, dst, src_pts, H):
     # show(src_trans, "bgr src_trans")
     result += src_trans    
 
-    cv2.imwrite('imgs/result_raw.jpg', result)
+    cv2.imwrite('imgs/result/result_raw.jpg', result)
     show(result, "result_raw")
 
     # blur boundary
@@ -98,19 +100,7 @@ def merge_ellipse(src, dst, src_pts, H):
 
     return result
 
-if __name__ == '__main__':
-    os.chdir(os.path.join(os.path.dirname(os.getcwd())))
-    print(f"Current working directory: {os.getcwd()}")
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--level", type=float, default=1)
-    parser.add_argument("--mergeMethod", type=int, default=1)
-
-    past = cv2.imread("imgs/gray/2.jpg")
-    past = cv2.cvtColor(past, cv2.COLOR_BGR2GRAY)
-    show(past, "original past")
-    present = cv2.imread("imgs/rgb/2.jpg")
-
+def homoConvert(past, present):
     surf = cv2.SIFT_create()
     # find the keypoints and descriptors with SURF
     kp1, des1 = surf.detectAndCompute(past, None)
@@ -146,11 +136,34 @@ if __name__ == '__main__':
                     matchesMask = matchesMask, # draw only inliers
                     flags = 2)
 
-    img3 = cv2.drawMatches(past, kp1, present, kp2, good, None, **draw_params)
-    show(img3, "matches")
-    cv2.imwrite('imgs/img3.jpg', img3)
+    # img3 = cv2.drawMatches(past, kp1, present, kp2, good, None, **draw_params)
+    # show(img3, "matches")
+    # cv2.imwrite('imgs/img3.jpg', img3)
 
-    # result = merge_circle(past, present, src_pts, H)
     result = merge_ellipse(past, present, src_pts, H)
-                
-    cv2.imwrite('imgs/result.jpg', result)
+    return result
+
+if __name__ == '__main__':
+    os.chdir(os.path.join(os.path.dirname(os.getcwd())))
+    print(f"Current working directory: {os.getcwd()}")
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--level", type=float, default=1)
+    parser.add_argument("--homoConvert", type=bool, default=False)
+    args = parser.parse_args()
+    past = cv2.imread("imgs/gray/3.jpg")
+    past = cv2.cvtColor(past, cv2.COLOR_BGR2GRAY)
+    show(past, "original past")
+    present = cv2.imread("imgs/rgb/3.jpg")
+
+    if args.homoConvert:
+        result = homoConvert(past, present)
+        cv2.imwrite('imgs/result/result.jpg', result)
+    else:
+        box = locate(['imgs/gray/3.jpg'])[0]
+        mask = np.zeros_like(past)
+        mask[box[0]:box[2], box[1]:box[3]] = 1
+        anti_mask = 1 - mask
+        result = present * anti_mask[:,:,np.newaxis] + past[:,:,np.newaxis] * mask[:,:,np.newaxis]
+        show(result, "result")
+        cv2.imwrite("imgs/result/3.jpg", result)

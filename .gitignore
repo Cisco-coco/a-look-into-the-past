@@ -131,6 +131,10 @@ dmypy.json
 # image files generated on the fly 
 imgs/rgb/
 imgs/gray/
+imgs/result
+videos/all_frames
+imgs/result_raw.jpg
+imgs/result.jpg
 
 # vscode config
 .vscode/

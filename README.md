@@ -14,12 +14,11 @@ final project for computer vision course of USTC 2022 Fall
 |   |-- main.py  
 |   |-- run.sh  
 |   |-- sa_map.py  
-|   `-- video_proc.py  
+|    -- video_proc.py  
 |-- imgs  
 |   |-- gray  
 |   |-- result  
-|   `-- rgb  
-|         
+|    -- rgb      
 |-- model_data  
 |-- nets  
 |-- requirement.txt  
@@ -27,4 +26,4 @@ final project for computer vision course of USTC 2022 Fall
 |-- video  
 |   |-- leningrad.mp4  
 |   |-- pathway.mp4  
-`-- yolo.py  
+ -- yolo.py  

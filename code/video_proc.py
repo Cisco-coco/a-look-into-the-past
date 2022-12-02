@@ -3,7 +3,7 @@ import os
 import numpy as np
 from tqdm import tqdm
 
-from main import homoConvert, show, merge_ellipse
+from main import homoConvert, show
 
 if __name__ == '__main__':
     os.chdir(os.path.join(os.path.dirname(os.getcwd())))

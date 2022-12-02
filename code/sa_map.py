@@ -44,7 +44,7 @@ def findZone(img, threshold=0.2):
     return biSaliencyMap
 
 
-def merge_SaliencyMap(src_names, dst_names, threshold=0.2):
+def merge_SaliencyMap_clone(src_names, dst_names, threshold=0.2):
 
     assert len(src_names) == len(dst_names), "src_names and dst_names should have the same length!"
     merged_list = []
@@ -56,15 +56,10 @@ def merge_SaliencyMap(src_names, dst_names, threshold=0.2):
         masked_biSaliencyMap = findZone(past)
         # print(f"dtype of masked_biSaliencyMap: {masked_biSaliencyMap.dtype}")
 
-        masked_biSaliencyMap = masked_biSaliencyMap.astype(np.uint8)
-        # print(f"maximum of masked_biSaliencyMap: {np.max(masked_biSaliencyMap)}")
-        anti_mask = 1 - masked_biSaliencyMap
-        # print(f"maximum of masked_present: {np.max(anti_mask)}")
-        masked_present = present * anti_mask[:, :, np.newaxis]
-        crop = past * masked_biSaliencyMap[:, :, np.newaxis]
+        mask  = masked_biSaliencyMap * 255
 
-        merged = crop + masked_present
-        merged_list.append(merged)
+        result = cv2.seamlessClone(past, present, mask, (past.shape[1]//2, past.shape[0]//2), cv2.NORMAL_CLONE)
+        merged_list.append(result)
         # show(merged, "merged")
 
     return merged_list
@@ -74,4 +69,4 @@ if __name__ == "__main__":
     print(f"Current working directory: {os.getcwd()}")
     src_names = ["imgs/gray/1.jpg"]
     dst_names = ["imgs/rgb/1.jpg"]
-    merged = merge_SaliencyMap(src_names, dst_names)
+    merged = merge_SaliencyMap_clone(src_names, dst_names)

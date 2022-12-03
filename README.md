@@ -30,3 +30,14 @@ final project for computer vision course of USTC 2022 Fall
 `-- yolo.py  
 
 ```
+
+## A quick look
+Saliency detection region selection:  
+![demo4](assets/4.jpg)  
+![demo5](assets/5.jpg)  
+
+
+Object detection region selection:  
+![demo1](assets/1.jpg)  
+![demo2](assets/2.jpg)  
+![demo3](assets/3.jpg)  
